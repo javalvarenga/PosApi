@@ -3,6 +3,7 @@ const { Upload } = require("@aws-sdk/lib-storage");
 const { v4: uuidv4 } = require("uuid");
 const AWS_BUCKET_NAME = "sevenpos";
 const AWS_BUCKET_REGION = "us-east-1";
+const dotenv = require("dotenv").config();
 
 //RECORDAR AGREGAR ESTO A LAS VARIABLES DE ENTORNO EN PROD
 const AWS_PUBLIC_KEY = process.env.AWS_PUBLIC_KEY;
