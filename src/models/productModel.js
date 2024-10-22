@@ -4,7 +4,6 @@ const sequelize = require("../db"); // Importa la conexión a la base de datos
 // Define el modelo para la tabla "Example"
 const Product = sequelize.define(
   "Product",
-
   {
     ProductId: {
       type: DataTypes.INTEGER,
@@ -16,8 +15,8 @@ const Product = sequelize.define(
       allowNull: false,
     },
     Description: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     Price: {
       type: DataTypes.DECIMAL(10, 2),
@@ -26,6 +25,10 @@ const Product = sequelize.define(
     Quantity: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    ImageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   },
   {
