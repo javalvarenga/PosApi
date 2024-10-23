@@ -110,13 +110,13 @@ exports.deleteProduct = async (req, res) => {
 };
 
 exports.reportByProduct = async (req, res) => {
-  const { productId } = req.body; // O obtener los parámetros de req.query o req.params
+  const { productId,cantidad,descripcion } = req.body; // O obtener los parámetros de req.query o req.params
 
   try {
     const results = await sequelize.query(
-      "CALL reportByProduct(:productId)", // Llamada al procedimiento almacenado
+      "CALL reportByProduct(:productId,:cantidad,:descripcion)", // Llamada al procedimiento almacenado
       {
-        replacements: { productId }, // Pasar los parámetros
+        replacements: { productId,cantidad,descripcion }, // Parámetros de la llamada
         type: sequelize.QueryTypes.RAW, // Tipo de consulta RAW
       }
     );
