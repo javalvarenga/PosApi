@@ -5,33 +5,36 @@ const { uploadImage } = require("../utils/s3");
 
 exports.createProduct = async (req, res) => {
   try {
-    const { ProductName, Price, Quantity, Description, Image } = req.body;
-    
-    if (Image && Image.length > 0) {
-      const isBase64 = isBase64DataUrl(Image);
+    const { productName, price, quantity, description, image } = req.body;
+
+    if (image && image.length > 0) {
+      const isBase64 = isBase64DataUrl(image);
       const ImageUrl = isBase64
-        ? await uploadImage(await decodeBase64Image(Image))
+        ? await uploadImage(await decodeBase64Image(image))
             .then(async (s3Url) => s3Url)
             .catch((error) => {
               console.log("error", error);
               throw new Error("Error al guardar la imagen");
             })
         : null;
-        console.log('ImageUrl', ImageUrl);
 
       // Crear un nuevo producto
       const newProduct = await Product.create({
-        ProductName,
-        Price,
-        Quantity,
-        Description,
-        ImageUrl,
+        ProductName: productName,
+        Price: price,
+        Quantity: quantity,
+        Description: description,
+        ImageUrl: ImageUrl,
       });
 
       res.status(201).json(newProduct); // 201 indica que el recurso fue creado exitosamente
+    } else {
+      res
+        .status(400)
+        .json({ message: "datos insuficientes para crear el producto" });
     }
   } catch (error) {
-        console.log('error',error);
+    console.log("error", error);
     res.status(500).json({ message: "Error al crear el producto", error });
   }
 };
@@ -39,7 +42,8 @@ exports.createProduct = async (req, res) => {
 exports.getProducts = async (req, res) => {
   try {
     const productList = await Product.findAll();
-    res.json(productList);
+    /* order desc product by id */
+    res.json(productList.sort((a, b) => b.ProductId - a.ProductId));
   } catch (error) {
     res.status(500).json({ message: "Error al obtener los productos", error });
   }
@@ -61,38 +65,62 @@ exports.getProduct = async (req, res) => {
     res.status(500).json({ message: "Error al obtener el producto", error });
   }
 };
-
 exports.updateProduct = async (req, res) => {
   try {
-    const { id } = req.params; // ProductId recibido como parámetro en la URL
-    const { ProductName, Price, Quantity, Description } = req.body;
+    const { productName, price, quantity, description, image,productId } = req.body;
 
-    // Encontrar el producto por su ID
-    const product = await Product.findByPk(id);
-
-    if (!product) {
-      return res.status(404).json({ message: "Producto no encontrado" });
+    // Verificar que todos los datos necesarios estén presentes
+    if (!productName || !price || !quantity || !description) {
+      return res.status(400).json({ message: "Datos insuficientes para actualizar el producto" });
     }
 
-    // Actualizar los campos
-    product.ProductName = ProductName || product.ProductName;
-    product.Price = Price || product.Price;
-    product.Quantity = Quantity || product.Quantity;
-    product.Description = Description || product.Description;
+    let imageUrl = null;
 
-    // Guardar los cambios
-    await product.save();
+    // Si se proporciona una imagen, manejamos si es Base64 o URL
+    if (image && image.length > 0) {
+      const isBase64 = isBase64DataUrl(image); // función que verifica si la imagen es Base64
+      imageUrl = isBase64
+        ? await uploadImage(await decodeBase64Image(image))
+            .catch((error) => {
+              console.error("Error al guardar la imagen en S3", error);
+              throw new Error("Error al guardar la imagen");
+            })
+        : image; // Si es URL, la utilizamos directamente
+    }
 
-    res.json(product); // Devolver el producto actualizado
+    // Actualizar el producto usando Sequelize
+    const [rowsUpdated] = await Product.update(
+      {
+        ProductName: productName,
+        Price: price,
+        Quantity: quantity,
+        Description: description,
+        ImageUrl: imageUrl, // Se actualiza solo si se proporciona la imagen
+      },
+      {
+        where: { ProductId: productId },
+        returning: true, // Solo necesario si usas Postgres y quieres el producto actualizado
+      }
+    );
+
+    // Verificar si se actualizó al menos una fila
+    if (rowsUpdated === 0) {
+      return res.status(404).json({ message: "Producto no encontrado o no actualizado" });
+    }
+
+    // Si todo va bien, responde con el producto actualizado
+    const updatedProduct = await Product.findByPk(productId);
+    res.status(200).json(updatedProduct);
   } catch (error) {
-    res.status(500).json({ message: "Error al actualizar el producto", error });
+    console.error("Error al actualizar el producto", error);
+    res.status(500).json({ message: "Error al actualizar el producto" });
   }
 };
 
 exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params; // ProductId recibido como parámetro en la URL
-
+    console.log("params", req.params);
     // Buscar el producto por su ID
     const product = await Product.findByPk(id);
 
@@ -110,13 +138,13 @@ exports.deleteProduct = async (req, res) => {
 };
 
 exports.reportByProduct = async (req, res) => {
-  const { productId,cantidad,descripcion } = req.body; // O obtener los parámetros de req.query o req.params
+  const { productId, cantidad, descripcion } = req.body; // O obtener los parámetros de req.query o req.params
 
   try {
     const results = await sequelize.query(
       "CALL reportByProduct(:productId,:cantidad,:descripcion)", // Llamada al procedimiento almacenado
       {
-        replacements: { productId,cantidad,descripcion }, // Parámetros de la llamada
+        replacements: { productId, cantidad, descripcion }, // Parámetros de la llamada
         type: sequelize.QueryTypes.RAW, // Tipo de consulta RAW
       }
     );
