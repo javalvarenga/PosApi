@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const products = require('./routes/products');
 const sales = require('./routes/sales');
+const categories = require('./routes/categories');
 
 const cors = require('cors');
 const PORT = process.env.PORT || 3001;
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 // Rutas
 app.use(`/${version}/products`, products);
 app.use(`/${version}/sales`, sales);
+app.use(`/${version}/categories`, categories);
 
 
 app.get('/', (req, res) => {
