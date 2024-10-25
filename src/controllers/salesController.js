@@ -9,7 +9,7 @@ exports.createSales = async (req, res) => {
     nombre, direccion, telefono, correo, nit, cui,
     fecha, tipo_pago, descuento, saldo, productos
   } = req.body;
-
+ console.log('req.body',req.body);
   try {
     // Convertimos los productos en un formato JSON adecuado para el procedimiento almacenado
     const detallesVentaJSON = JSON.stringify(
@@ -43,5 +43,41 @@ exports.createSales = async (req, res) => {
   } catch (error) {
     console.error("Error al crear la venta:", error);
     res.status(500).json({ message: "Error al crear la venta", error });
+  }
+};
+
+
+exports.getSalesById = async (req, res) => {
+  try {
+    const { id } = req.params; // venta_id recibido como parámetro en la URL
+
+    // Encontrar la venta por su ID
+    const sales = await Venta.findByPk(id);
+
+    if (!sales) {
+      return res.status(404).json({ message: "Venta no encontrada" });
+    }
+
+    res.json(sales); // Devolver la venta
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener la venta", error });
+  }
+};
+
+exports.getSales = async (req, res) => {
+  try {
+    const results = await sequelize.query(
+      "CALL sp_categories_getCategoriesReport()",
+    );
+
+    if (Array.isArray(results)) {
+      console.log("Reporte de Ventas:", results);
+      res.json(results); // Enviar los resultados como respuesta
+    } else {
+      res.json({ message: "No se encontraron ventas" });
+    }
+  } catch (error) {
+    console.error("Error al ejecutar el reporte:", error);
+    res.status(500).json({ message: "Error al ejecutar el reporte", error });
   }
 };

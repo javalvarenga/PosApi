@@ -49,7 +49,7 @@ const Sale = sequelize.define(
     },
   },
   {
-    timestamps: true,
+    timestamps: false,
     tableName: "ventas", // Nombre de la tabla en la base de datos
   }
 );
