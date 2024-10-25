@@ -66,13 +66,14 @@ exports.getSalesById = async (req, res) => {
 
 exports.getSales = async (req, res) => {
   try {
-    const results = await sequelize.query(
-      "CALL reporte_facturas()",
-    );
+    const results = await sequelize.query("CALL reporte_facturas()");
 
-    if (Array.isArray(results)) {
-      console.log("Reporte de Ventas:", results);
-      res.json(results); // Enviar los resultados como respuesta
+    if (Array.isArray(results)) { // Asegúrate de acceder al primer elemento del array
+      const sortedResults = results.sort((a, b) => {
+        return b.id_venta - a.id_venta; // Cambia "id_venta" por el nombre correcto de la columna que contiene el ID de la venta
+      });
+      console.log("Reporte de Ventas:", sortedResults);
+      res.json(sortedResults); // Enviar los resultados ordenados como respuesta
     } else {
       res.json({ message: "No se encontraron resultados" });
     }
