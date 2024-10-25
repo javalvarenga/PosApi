@@ -17,14 +17,6 @@ const Devolucion = sequelize.define(
         key: 'id_venta',
       },
     },
-    ProductId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'Products', 
-        key: 'ProductId',
-      },
-    },
     motivo: {
       type: DataTypes.STRING(255),
       allowNull: true,

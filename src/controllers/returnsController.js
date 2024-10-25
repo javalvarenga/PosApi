@@ -6,7 +6,7 @@ exports.createDevolucion = async (req, res) => {
   const { id_venta, ProductId, motivo } = req.body;
   try {
     const results = await sequelize.query(
-      "CALL InsertarDevolucion(:id_venta, :ProductId, :motivo)", 
+      "CALL InsertarDevolucion(:id_venta, :motivo)", 
       {
         replacements: { id_venta, ProductId, motivo }, 
         type: sequelize.QueryTypes.RAW, 
