@@ -3,6 +3,7 @@ const app = express();
 const products = require('./routes/products');
 const sales = require('./routes/sales');
 const categories = require('./routes/categories');
+const returns = require('./routes/returns');
 const users = require('./routes/users');
 
 const cors = require('cors');
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(`/${version}/products`, products);
 app.use(`/${version}/sales`, sales);
 app.use(`/${version}/categories`, categories);
+app.use(`/${version}/returns`, returns);
 app.use(`/${version}/users`, users);
 
 
