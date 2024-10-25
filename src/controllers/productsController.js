@@ -13,7 +13,7 @@ exports.createProduct = async (req, res) => {
       const ImageUrl = isBase64
         ? await uploadImage(await decodeBase64Image(image))
             .then(async (s3Url) => s3Url)
-            .catch((error) => {
+            .catch((error) => {   
               console.log("error", error);
               throw new Error("Error al guardar la imagen");
             })
