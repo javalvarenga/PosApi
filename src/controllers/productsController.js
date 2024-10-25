@@ -5,7 +5,8 @@ const { uploadImage } = require("../utils/s3");
 
 exports.createProduct = async (req, res) => {
   try {
-    const { productName, price, quantity, description, image } = req.body;
+    const { productName, price, quantity, description,categoryId, image  } =
+      req.body;
 
     if (image && image.length > 0) {
       const isBase64 = isBase64DataUrl(image);
@@ -25,6 +26,7 @@ exports.createProduct = async (req, res) => {
         Quantity: quantity,
         Description: description,
         ImageUrl: ImageUrl,
+        CategoryId: categoryId,
       });
 
       res.status(201).json(newProduct); // 201 indica que el recurso fue creado exitosamente
@@ -67,11 +69,14 @@ exports.getProduct = async (req, res) => {
 };
 exports.updateProduct = async (req, res) => {
   try {
-    const { productName, price, quantity, description, image,productId } = req.body;
+    const { productName, price, quantity, description,categoryId, image, productId } =
+      req.body;
 
     // Verificar que todos los datos necesarios estén presentes
     if (!productName || !price || !quantity || !description) {
-      return res.status(400).json({ message: "Datos insuficientes para actualizar el producto" });
+      return res
+        .status(400)
+        .json({ message: "Datos insuficientes para actualizar el producto" });
     }
 
     let imageUrl = null;
@@ -80,11 +85,10 @@ exports.updateProduct = async (req, res) => {
     if (image && image.length > 0) {
       const isBase64 = isBase64DataUrl(image); // función que verifica si la imagen es Base64
       imageUrl = isBase64
-        ? await uploadImage(await decodeBase64Image(image))
-            .catch((error) => {
-              console.error("Error al guardar la imagen en S3", error);
-              throw new Error("Error al guardar la imagen");
-            })
+        ? await uploadImage(await decodeBase64Image(image)).catch((error) => {
+            console.error("Error al guardar la imagen en S3", error);
+            throw new Error("Error al guardar la imagen");
+          })
         : image; // Si es URL, la utilizamos directamente
     }
 
@@ -96,6 +100,7 @@ exports.updateProduct = async (req, res) => {
         Quantity: quantity,
         Description: description,
         ImageUrl: imageUrl, // Se actualiza solo si se proporciona la imagen
+        CategoryId: categoryId
       },
       {
         where: { ProductId: productId },
@@ -105,7 +110,9 @@ exports.updateProduct = async (req, res) => {
 
     // Verificar si se actualizó al menos una fila
     if (rowsUpdated === 0) {
-      return res.status(404).json({ message: "Producto no encontrado o no actualizado" });
+      return res
+        .status(404)
+        .json({ message: "Producto no encontrado o no actualizado" });
     }
 
     // Si todo va bien, responde con el producto actualizado
