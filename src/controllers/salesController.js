@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-const Venta = require("../models/saleModel");
-=======
 const Venta = require("../models/salesModel");
->>>>>>> origin
 const DetalleVenta = require("../models/detalleVentaModel");
 const Product = require("../models/productModel");
 
@@ -13,11 +9,7 @@ exports.createSales = async (req, res) => {
     nombre, direccion, telefono, correo, nit, cui,
     fecha, tipo_pago, descuento, saldo, productos
   } = req.body;
-<<<<<<< HEAD
-
-=======
  console.log('req.body',req.body);
->>>>>>> origin
   try {
     // Convertimos los productos en un formato JSON adecuado para el procedimiento almacenado
     const detallesVentaJSON = JSON.stringify(
@@ -29,11 +21,7 @@ exports.createSales = async (req, res) => {
 
     // Llamada al procedimiento almacenado con Sequelize
     const [result] = await sequelize.query(
-<<<<<<< HEAD
       "CALL insertarClienteVenta3(:nombre, :direccion, :telefono, :correo, :nit, :cui, :fecha, :tipo_pago, :descuento, :saldo, :detallesVentaJSON)",
-=======
-      "CALL insertarClienteVenta2(:nombre, :direccion, :telefono, :correo, :nit, :cui, :fecha, :tipo_pago, :descuento, :saldo, :detallesVentaJSON)",
->>>>>>> origin
       {
         replacements: {
           nombre,
