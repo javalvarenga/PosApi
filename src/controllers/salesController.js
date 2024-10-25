@@ -64,17 +64,17 @@ exports.getSalesById = async (req, res) => {
   }
 };
 
-exports.getSales = async (req, res) => {
+exports.getCategoriesReport = async (req, res) => {
   try {
     const results = await sequelize.query(
-      "CALL sp_categories_getCategoriesReport()",
+      "CALL reporte_facturas()",
     );
 
     if (Array.isArray(results)) {
       console.log("Reporte de Ventas:", results);
       res.json(results); // Enviar los resultados como respuesta
     } else {
-      res.json({ message: "No se encontraron ventas" });
+      res.json({ message: "No se encontraron resultados" });
     }
   } catch (error) {
     console.error("Error al ejecutar el reporte:", error);
