@@ -5,7 +5,7 @@ const sequelize = require("../db"); // Importa la conexión a la base de datos
 const Product = sequelize.define(
   "Product",
   {
-    ProductId: {
+    ProducId: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true, // Especifica que esta es la clave primaria
