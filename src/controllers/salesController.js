@@ -64,7 +64,7 @@ exports.getSalesById = async (req, res) => {
   }
 };
 
-exports.getCategoriesReport = async (req, res) => {
+exports.getSales = async (req, res) => {
   try {
     const results = await sequelize.query(
       "CALL reporte_facturas()",
