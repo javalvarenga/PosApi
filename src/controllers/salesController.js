@@ -21,7 +21,7 @@ exports.createSales = async (req, res) => {
 
     // Llamada al procedimiento almacenado con Sequelize
     const [result] = await sequelize.query(
-      "CALL insertarClienteVenta2(:nombre, :direccion, :telefono, :correo, :nit, :cui, :fecha, :tipo_pago, :descuento, :saldo, :detallesVentaJSON)",
+      "CALL insertarClienteVenta3(:nombre, :direccion, :telefono, :correo, :nit, :cui, :fecha, :tipo_pago, :descuento, :saldo, :detallesVentaJSON)",
       {
         replacements: {
           nombre,
