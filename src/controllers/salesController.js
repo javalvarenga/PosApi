@@ -21,7 +21,7 @@ exports.createSales = async (req, res) => {
 
     // Llamada al procedimiento almacenado con Sequelize
     const [result] = await sequelize.query(
-      "CALL insertarClienteVenta2(:nombre, :direccion, :telefono, :correo, :nit, :cui, :fecha, :tipo_pago, :descuento, :saldo, :detallesVentaJSON)",
+      "CALL insertarClienteVenta3(:nombre, :direccion, :telefono, :correo, :nit, :cui, :fecha, :tipo_pago, :descuento, :saldo, :detallesVentaJSON)",
       {
         replacements: {
           nombre,
@@ -45,3 +45,15 @@ exports.createSales = async (req, res) => {
     res.status(500).json({ message: "Error al crear la venta", error });
   }
 };
+
+exports.getSales = async (req, res) => {
+    try {
+      // Llamada al procedimiento almacenado reporte_facturas
+      const [sales] = await sequelize.query("CALL reporte_facturas()");
+  
+      res.status(200).json(sales);  // Devolver los resultados en formato JSON
+    } catch (error) {
+      console.error("Error al obtener el reporte de facturas:", error);
+      res.status(500).json({ message: "Error al obtener el reporte de facturas", error });
+    }
+  };
