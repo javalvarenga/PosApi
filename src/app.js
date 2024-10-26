@@ -4,6 +4,7 @@ const products = require('./routes/products');
 const sales = require('./routes/sales');
 const categories = require('./routes/categories');
 const users = require('./routes/users');
+const accounts = require('./routes/accounts');
 
 const cors = require('cors');
 const PORT = process.env.PORT || 3001;
@@ -22,6 +23,7 @@ app.use(`/${version}/products`, products);
 app.use(`/${version}/sales`, sales);
 app.use(`/${version}/categories`, categories);
 app.use(`/${version}/users`, users);
+app.use(`/${version}/accounts`, accounts);
 
 
 app.get('/', (req, res) => {

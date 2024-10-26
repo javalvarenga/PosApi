@@ -3,7 +3,7 @@ const sequelize = require("../db"); // Importa la conexión a la base de datos
 
 // Define el modelo para la tabla "Example"
 const Account = sequelize.define(
-  "account",
+  "accounty",
   {
     id_cliente: {
       type: DataTypes.INTEGER,

@@ -1,5 +1,5 @@
 const Account = require("../models/accountModel");
-const { sequelize } = require("../db");
+const sequelize = require("../db");
 
 exports.getAccount = async (req, res) => {
   try {
@@ -10,15 +10,6 @@ exports.getAccount = async (req, res) => {
   }
 };
 
-/*metodo para crear una cuenta*/
-exports.createAccount = async (req, res) => {
-  try {
-    const account = await Account.create(req.body);
-    res.json(account);
-  } catch (error) {
-    res.status(500).json({ message: "Error al crear la cuenta", error });
-  }
-};
 
 /*metodo para actualizar una cuenta*/
 exports.updateAccount = async (req, res) => {
@@ -32,15 +23,48 @@ exports.updateAccount = async (req, res) => {
   }
 };
 
-/*metodo para eliminar una cuenta*/
-exports.deleteAccount = async (req, res) => {
+
+/*metodo para llamar un store procedure*/
+exports.getAccountReport = async (req, res) => {
   try {
-    const account = await Account.destroy({
-      where: { id: req.params.id },
-    });
-    res.json(account);
+    const results = await sequelize.query(
+      "CALL MostrarSaldos()",
+    );
+
+    if (Array.isArray(results)) {
+      console.log("Reporte de Cuentas:", results);
+      res.json(results); // Enviar los resultados como respuesta
+    } else {
+      res.json({ message: "No se encontraron resultados" });
+    }
   } catch (error) {
-    res.status(500).json({ message: "Error al eliminar la cuenta", error });
+    console.error("Error al ejecutar el reporte:", error);
+    res.status(500).json({ message: "Error al ejecutar el reporte", error });
   }
 };
 
+/*metodo para llamar un store procedure para cambiar el saldo de una cuenta*/
+exports.updateAccountSaldo = async (req, res) => {
+
+  const { idAccount, saldoAccount } = req.body;
+
+  try {
+    const results = await sequelize.query(
+      "CALL ActualizarSaldoCliente(:idAccount, :saldoAccount)",
+      {
+        replacements: {idAccount, saldoAccount},
+        type: sequelize.QueryTypes.RAW
+      }
+    );
+
+    if (Array.isArray(results)) {
+      console.log("Reporte de Cuentas:", results);
+      res.json(results); // Enviar los resultados como respuesta
+    } else {
+      res.json({ message: "No se encontraron resultados" });
+    }
+  } catch (error) {
+    console.error("Error al ejecutar el reporte:", error);
+    res.status(500).json({ message: "Error al ejecutar el reporte", error });
+  }
+};
