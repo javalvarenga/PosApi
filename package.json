@@ -2,9 +2,11 @@
   "name": "apirest",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "api": "nodemon --no-warnings src/app.js"
+    "api": "nodemon --no-warnings src/app.js",
+    "dev": "node src/app.js",
+    "start": "node src/app.js"
   },
   "keywords": [],
   "author": "",
