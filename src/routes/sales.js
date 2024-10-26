@@ -5,7 +5,7 @@ const salesController = require('../controllers/salesController');
 // Define rutas aquí
 router.post('/createSales', salesController.createSales);
 router.get('/getSales', salesController.getSales);
-router
+router.get('/ventas/:id/pdf', salesController.getSalesByIdPDF);
 
 
 
